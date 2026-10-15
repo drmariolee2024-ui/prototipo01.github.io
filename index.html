@@ -1,0 +1,839 @@
+```html
+<!DOCTYPE html>
+<html lang="es" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yakugaini - Solución Integral de Ingeniería Ambiental</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Inter Font & FontAwesome for Accessible Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        yaku: {
+                            50: '#eef8ff',
+                            100: '#d7effe',
+                            500: '#0284c7',
+                            600: '#0369a1',
+                            700: '#03588c',
+                            900: '#0c2340',
+                            accent: '#10b981', // Verde ambiental
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Estilos personalizados para accesibilidad y animaciones fluidas */
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+        .high-contrast {
+            background-color: #000000 !important;
+            color: #ffffff !important;
+        }
+        .high-contrast * {
+            border-color: #ffffff !important;
+        }
+        /* Transiciones suaves */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease-in-out forwards;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 h-full flex flex-col selection:bg-yaku-500 selection:text-white">
+
+    <!-- BARRA DE ACCESIBILIDAD UNIVERSAL SUPERIOR -->
+    <header class="bg-yaku-900 text-white px-4 py-2 text-xs flex flex-wrap justify-between items-center border-b border-yaku-700">
+        <div class="flex items-center space-x-4">
+            <span class="flex items-center gap-1 font-semibold tracking-wider text-yaku-100">
+                <i class="fa-solid fa-universal-access text-yaku-accent"></i> PANEL DE ACCESIBILIDAD UNIVERSAL
+            </span>
+        </div>
+        <div class="flex items-center space-x-3 my-1 sm:my-0">
+            <button onclick="toggleHighContrast()" id="btnContrast" class="bg-yaku-800 hover:bg-yaku-700 px-3 py-1 rounded transition border border-yaku-600 focus:ring-2 focus:ring-white" aria-label="Cambiar a alto contraste">
+                <i class="fa-solid fa-circle-half-stroke mr-1"></i> Alto Contraste
+            </button>
+            <button onclick="adjustFontSize(1)" class="bg-yaku-800 hover:bg-yaku-700 px-2.5 py-1 rounded transition border border-yaku-600 focus:ring-2 focus:ring-white" aria-label="Aumentar tamaño de letra">
+                A+
+            </button>
+            <button onclick="adjustFontSize(-1)" class="bg-yaku-800 hover:bg-yaku-700 px-2.5 py-1 rounded transition border border-yaku-600 focus:ring-2 focus:ring-white" aria-label="Reducir tamaño de letra">
+                A-
+            </button>
+        </div>
+    </header>
+
+    <!-- NAVEGACIÓN PRINCIPAL -->
+    <nav class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <!-- Logotipo e identidad -->
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-yaku-600 to-yaku-accent flex items-center justify-center text-white shadow-md">
+                        <i class="fa-solid fa-droplet text-xl"></i>
+                    </div>
+                    <div>
+                        <span class="text-xl font-extrabold tracking-tight text-yaku-900">YAKUGAINI</span>
+                        <span class="block text-[10px] uppercase tracking-widest text-yaku-600 font-semibold">Ingeniería & Diseño Universal</span>
+                    </div>
+                </div>
+
+                <!-- Enlaces de navegación desktop -->
+                <div class="hidden md:flex items-center space-x-1 lg:space-x-2">
+                    <button onclick="switchTab('inicio')" id="nav-inicio" class="nav-btn px-3 py-2 rounded-lg text-sm font-medium text-yaku-600 bg-yaku-50 transition">
+                        <i class="fa-solid fa-house mr-1.5"></i> Inicio
+                    </button>
+                    <button onclick="switchTab('diagnostico')" id="nav-diagnostico" class="nav-btn px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-yaku-600 hover:bg-slate-50 transition">
+                        <i class="fa-solid fa-map-location-dot mr-1.5"></i> Diagnóstico & Monitoreo
+                    </button>
+                    <button onclick="switchTab('ingenieria')" id="nav-ingenieria" class="nav-btn px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-yaku-600 hover:bg-slate-50 transition">
+                        <i class="fa-solid fa-gear mr-1.5"></i> Soluciones Técnicas
+                    </button>
+                    <button onclick="switchTab('impacto')" id="nav-impacto" class="nav-btn px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-yaku-600 hover:bg-slate-50 transition">
+                        <i class="fa-solid fa-chart-line mr-1.5"></i> Simulador de Impacto
+                    </button>
+                    <button onclick="switchTab('reportes')" id="nav-reportes" class="nav-btn px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-yaku-600 hover:bg-slate-50 transition">
+                        <i class="fa-solid fa-headset mr-1.5"></i> Reportes Comunitarios
+                    </button>
+                </div>
+
+                <!-- Botón móvil toggle -->
+                <div class="flex items-center md:hidden">
+                    <button onclick="toggleMobileMenu()" class="p-2 rounded-lg text-slate-600 hover:bg-slate-100 focus:outline-none" aria-label="Abrir menú móvil">
+                        <i class="fa-solid fa-bars text-xl" id="mobileMenuIcon"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Menú Desplegable Móvil -->
+        <div id="mobileMenu" class="hidden md:hidden bg-white border-b border-slate-200 px-4 pt-2 pb-4 space-y-1">
+            <button onclick="switchTab('inicio'); toggleMobileMenu();" class="w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-yaku-600 bg-yaku-50">Inicio</button>
+            <button onclick="switchTab('diagnostico'); toggleMobileMenu();" class="w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-slate-600">Diagnóstico & Monitoreo</button>
+            <button onclick="switchTab('ingenieria'); toggleMobileMenu();" class="w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-slate-600">Soluciones Técnicas</button>
+            <button onclick="switchTab('impacto'); toggleMobileMenu();" class="w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-slate-600">Simulador de Impacto</button>
+            <button onclick="switchTab('reportes'); toggleMobileMenu();" class="w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-slate-600">Reportes Comunitarios</button>
+        </div>
+    </nav>
+
+    <!-- CONTENEDOR DE PESTAÑAS (VISTAS) -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+        <!-- 1. SECCIÓN INICIO -->
+        <section id="tab-inicio" class="tab-content active space-y-8">
+            <!-- Hero Banner -->
+            <div class="relative bg-gradient-to-r from-yaku-900 via-yaku-700 to-yaku-600 rounded-3xl p-8 sm:p-12 text-white overflow-hidden shadow-xl">
+                <div class="absolute -right-10 -bottom-10 w-96 h-96 bg-yaku-accent opacity-10 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="relative z-10 max-w-2xl space-y-4">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-yaku-accent/20 text-yaku-100 border border-yaku-accent/30">
+                        <i class="fa-solid fa-shield-halved"></i> Solución Integral 2026
+                    </span>
+                    <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight">
+                        Transformando el acceso al agua en sectores periurbanos
+                    </h1>
+                    <p class="text-slate-200 text-sm sm:text-base leading-relaxed">
+                        Yakugaini mitiga las severas barreras de acceso, distribución e inseguridad de agua potable que afectan a más de <strong>3.5 millones de personas</strong> mediante ingeniería ambiental avanzada y diseño universal.
+                    </p>
+                    <div class="pt-2 flex flex-wrap gap-4">
+                        <button onclick="switchTab('diagnostico')" class="bg-yaku-accent hover:bg-emerald-600 text-white font-semibold px-6 py-3 rounded-xl shadow-lg transition transform hover:-translate-y-0.5 flex items-center gap-2">
+                            <i class="fa-solid fa-map-location-dot"></i> Ver Monitoreo en Vivo
+                        </button>
+                        <button onclick="switchTab('impacto')" class="bg-white/10 hover:bg-white/20 backdrop-blur border border-white/20 text-white font-semibold px-6 py-3 rounded-xl transition flex items-center gap-2">
+                            <i class="fa-solid fa-chart-pie"></i> Explorar Simulador
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Métricas Clave de la Problemática -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition">
+                    <div class="w-12 h-12 rounded-xl bg-blue-50 text-yaku-600 flex items-center justify-center text-xl mb-4">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-yaku-900">3.5M+</h3>
+                    <p class="text-sm font-medium text-slate-500 mt-1">Personas afectadas en zonas periurbanas</p>
+                    <span class="inline-block mt-3 text-xs font-semibold text-rose-600 bg-rose-50 px-2 py-0.5 rounded">Alta vulnerabilidad hídrica</span>
+                </div>
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition">
+                    <div class="w-12 h-12 rounded-xl bg-emerald-50 text-yaku-accent flex items-center justify-center text-xl mb-4">
+                        <i class="fa-solid fa-filter"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-yaku-900">99.8%</h3>
+                    <p class="text-sm font-medium text-slate-500 mt-1">Eficiencia en purificación descentralizada</p>
+                    <span class="inline-block mt-3 text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">Estándar OMS superado</span>
+                </div>
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition">
+                    <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl mb-4">
+                        <i class="fa-solid fa-clock-rotate-left"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-yaku-900">-75%</h3>
+                    <p class="text-sm font-medium text-slate-500 mt-1">Reducción en tiempo de acarreo de agua</p>
+                    <span class="inline-block mt-3 text-xs font-semibold text-amber-600 bg-amber-50 px-2 py-0.5 rounded">Diseño ergonómico y universal</span>
+                </div>
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition">
+                    <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-xl mb-4">
+                        <i class="fa-solid fa-network-wired"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-yaku-900">12 Soportes</h3>
+                    <p class="text-sm font-medium text-slate-500 mt-1">Sectores periurbanos interconectados</p>
+                    <span class="inline-block mt-3 text-xs font-semibold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">Monitoreo IoT en tiempo real</span>
+                </div>
+            </div>
+
+            <!-- Pilares del Proyecto -->
+            <div class="bg-white rounded-3xl border border-slate-200 p-8 shadow-sm">
+                <div class="max-w-3xl mb-8">
+                    <h2 class="text-2xl font-bold text-yaku-900">Pilares Fundamentales de Yakugaini</h2>
+                    <p class="text-slate-600 text-sm mt-1">Nuestra arquitectura metodológica combina la ingeniería ambiental de vanguardia con la accesibilidad universal.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="space-y-3">
+                        <div class="w-10 h-10 rounded-lg bg-yaku-100 text-yaku-600 flex items-center justify-center font-bold">1</div>
+                        <h3 class="text-lg font-bold text-yaku-900">Ingeniería Ambiental Descentralizada</h3>
+                        <p class="text-sm text-slate-600 leading-relaxed">Sistemas modulares de captación pluvial avanzada, biofiltración por capas naturales y desinfección solar UV de bajo consumo energético.</p>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="w-10 h-10 rounded-lg bg-yaku-100 text-yaku-600 flex items-center justify-center font-bold">2</div>
+                        <h3 class="text-lg font-bold text-yaku-900">Diseño Universal Accesible</h3>
+                        <p class="text-sm text-slate-600 leading-relaxed">Estaciones de agua adaptadas con rampas, texturas táctiles, alto contraste visual, y mecanismos de operación ergonómicos para adultos mayores y personas con movilidad reducida.</p>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="w-10 h-10 rounded-lg bg-yaku-100 text-yaku-600 flex items-center justify-center font-bold">3</div>
+                        <h3 class="text-lg font-bold text-yaku-900">Gobernanza Comunitaria e IoT</h3>
+                        <p class="text-sm text-slate-600 leading-relaxed">Plataforma digital para la gestión de reportes en tiempo real, alertas de calidad y participación activa de los líderes barriales en la distribución equitativa.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. SECCIÓN DIAGNÓSTICO / MONITOREO PERIURBANO -->
+        <section id="tab-diagnostico" class="tab-content space-y-6">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                    <h2 class="text-2xl font-bold text-yaku-900">Diagnóstico y Monitoreo Periurbano</h2>
+                    <p class="text-slate-600 text-sm">Estado actual de las estaciones de distribución, calidad fisicoquímica y presión de suministro por sector.</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Sistema en línea
+                    </span>
+                    <button onclick="refreshData()" class="bg-yaku-600 hover:bg-yaku-700 text-white text-xs font-semibold px-3 py-2 rounded-lg transition shadow-sm flex items-center gap-1.5">
+                        <i class="fa-solid fa-rotate"></i> Actualizar Métricas
+                    </button>
+                </div>
+            </div>
+
+            <!-- Grid: Mapa Simulado e Indicadores -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Mapa Interactivo Simulado (2 Columnas) -->
+                <div class="lg:col-span-2 bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex flex-col justify-between space-y-4">
+                    <div class="flex justify-between items-center">
+                        <h3 class="font-bold text-yaku-900 flex items-center gap-2">
+                            <i class="fa-solid fa-map text-yaku-600"></i> Mapa de Cobertura y Estaciones Periurbanas
+                        </h3>
+                        <span class="text-xs text-slate-500 font-medium">Haga clic en un sector para ver detalles</span>
+                    </div>
+
+                    <!-- Lienzo de Mapa Simulado con Pines Interactivos -->
+                    <div class="relative bg-slate-900 rounded-xl h-80 sm:h-96 overflow-hidden flex items-center justify-center border border-slate-800">
+                        <!-- Fondo de mapa estilizado vectorial -->
+                        <div class="absolute inset-0 opacity-35 bg-[radial-gradient(#0284c7_1px,transparent_1px)] [background-size:16px_16px]"></div>
+                        <!-- Contornos simulados de cerros/zonas -->
+                        <div class="absolute top-10 left-10 w-48 h-32 bg-yaku-800/40 rounded-full blur-xl"></div>
+                        <div class="absolute bottom-10 right-10 w-64 h-40 bg-emerald-900/30 rounded-full blur-xl"></div>
+
+                        <!-- Pines de Sectores -->
+                        <div onclick="selectSector('Sector Norte - Laderas de Alta Vista')" class="absolute top-16 left-1/4 cursor-pointer group flex flex-col items-center">
+                            <div class="w-8 h-8 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-lg transform group-hover:scale-110 transition animate-bounce">
+                                <i class="fa-solid fa-droplet text-xs"></i>
+                            </div>
+                            <span class="bg-black/80 text-white text-[10px] px-2 py-0.5 rounded mt-1 whitespace-nowrap">Norte: Alta Vista</span>
+                        </div>
+
+                        <div onclick="selectSector('Sector Este - Colinas del Sol')" class="absolute top-1/3 right-1/4 cursor-pointer group flex flex-col items-center">
+                            <div class="w-8 h-8 rounded-full bg-amber-500 text-white flex items-center justify-center shadow-lg transform group-hover:scale-110 transition">
+                                <i class="fa-solid fa-triangle-exclamation text-xs"></i>
+                            </div>
+                            <span class="bg-black/80 text-white text-[10px] px-2 py-0.5 rounded mt-1 whitespace-nowrap">Este: Colinas del Sol</span>
+                        </div>
+
+                        <div onclick="selectSector('Sector Sur - Villa Esperanza')" class="absolute bottom-16 left-1/3 cursor-pointer group flex flex-col items-center">
+                            <div class="w-8 h-8 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-lg transform group-hover:scale-110 transition">
+                                <i class="fa-solid fa-droplet text-xs"></i>
+                            </div>
+                            <span class="bg-black/80 text-white text-[10px] px-2 py-0.5 rounded mt-1 whitespace-nowrap">Sur: Villa Esperanza</span>
+                        </div>
+
+                        <div onclick="selectSector('Sector Oeste - Nueva Esperanza Alta')" class="absolute top-1/2 left-12 cursor-pointer group flex flex-col items-center">
+                            <div class="w-8 h-8 rounded-full bg-rose-500 text-white flex items-center justify-center shadow-lg transform group-hover:scale-110 transition">
+                                <i class="fa-solid fa-triangle-exclamation text-xs"></i>
+                            </div>
+                            <span class="bg-black/80 text-white text-[10px] px-2 py-0.5 rounded mt-1 whitespace-nowrap">Oeste: Nueva Esperanza</span>
+                        </div>
+                    </div>
+
+                    <!-- Leyenda del mapa -->
+                    <div class="flex flex-wrap items-center gap-4 text-xs font-medium text-slate-600">
+                        <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-emerald-500"></span> Operativo Óptimo</span>
+                        <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-amber-500"></span> Presión Intermitente</span>
+                        <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-rose-500"></span> Mantenimiento Requerido</span>
+                    </div>
+                </div>
+
+                <!-- Panel de Detalles del Sector Seleccionado -->
+                <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+                            <h3 class="font-bold text-yaku-900">Detalle del Sector</h3>
+                            <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-yaku-50 text-yaku-700">Monitoreo IoT</span>
+                        </div>
+
+                        <div id="sectorDetails" class="space-y-4 pt-4">
+                            <div class="p-3 rounded-xl bg-slate-50 border border-slate-100">
+                                <span class="text-xs text-slate-500 block">Sector Seleccionado</span>
+                                <h4 id="detName" class="font-bold text-yaku-900 text-base mt-0.5">Sector Norte - Laderas de Alta Vista</h4>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div class="p-3 rounded-xl bg-slate-50 border border-slate-100">
+                                    <span class="text-xs text-slate-500 block">Calidad Agua (NTU)</span>
+                                    <span id="detCalidad" class="text-lg font-bold text-emerald-600">0.4 NTU (Excelente)</span>
+                                </div>
+                                <div class="p-3 rounded-xl bg-slate-50 border border-slate-100">
+                                    <span class="text-xs text-slate-500 block">Presión de Red</span>
+                                    <span id="detPresion" class="text-lg font-bold text-yaku-900">2.4 Bar</span>
+                                </div>
+                            </div>
+                            <div class="p-3 rounded-xl bg-slate-50 border border-slate-100">
+                                <span class="text-xs text-slate-500 block">Población Beneficiada</span>
+                                <span id="detPoblacion" class="text-sm font-semibold text-slate-800">45,000 habitantes</span>
+                            </div>
+                            <div class="p-3 rounded-xl bg-slate-50 border border-slate-100">
+                                <span class="text-xs text-slate-500 block">Estado de Estación Universal</span>
+                                <span id="detEstado" class="text-sm font-semibold text-emerald-700 flex items-center gap-1.5 mt-0.5">
+                                    <i class="fa-solid fa-circle-check"></i> Accesible & Operativa
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-4">
+                        <button onclick="alertSectorAction()" class="w-full bg-yaku-50 hover:bg-yaku-100 text-yaku-700 font-semibold py-2.5 rounded-xl text-sm transition border border-yaku-200">
+                            Solicitar Asistencia Técnica
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. SECCIÓN INGENIERÍA AMBIENTAL Y SOLUCIONES -->
+        <section id="tab-ingenieria" class="tab-content space-y-6">
+            <div>
+                <h2 class="text-2xl font-bold text-yaku-900">Panel de Ingeniería Ambiental y Soluciones</h2>
+                <p class="text-slate-600 text-sm">Tecnologías de purificación, captación pluvial y diseño universal integradas para zonas periurbanas.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Módulo 1 -->
+                <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4 flex flex-col justify-between">
+                    <div>
+                        <div class="w-12 h-12 rounded-xl bg-blue-50 text-yaku-600 flex items-center justify-center text-xl mb-4">
+                            <i class="fa-solid fa-cloud-rain"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-yaku-900">Captación Pluvial Avanzada</h3>
+                        <p class="text-sm text-slate-600 mt-2 leading-relaxed">
+                            Sistemas modulares de techos recolectores con filtros de autolimpieza de primera descarga y almacenamiento estabilizado contra contaminación cruzada.
+                        </p>
+                    </div>
+                    <div class="pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-yaku-600">
+                        <span>Eficiencia: 94% recolección</span>
+                        <span class="bg-yaku-50 px-2.5 py-1 rounded-lg">Módulo A</span>
+                    </div>
+                </div>
+
+                <!-- Módulo 2 -->
+                <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4 flex flex-col justify-between">
+                    <div>
+                        <div class="w-12 h-12 rounded-xl bg-emerald-50 text-yaku-accent flex items-center justify-center text-xl mb-4">
+                            <i class="fa-solid fa-biohazard"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-yaku-900">Biofiltración Multicapa</h3>
+                        <p class="text-sm text-slate-600 mt-2 leading-relaxed">
+                            Lechos filtrantes compuestos por arena, grava graduada, carbón activado granulado y zeolita natural para remoción de metales pesados y patógenos.
+                        </p>
+                    </div>
+                    <div class="pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-emerald-600">
+                        <span>Reducción bacteriana: 99.9%</span>
+                        <span class="bg-emerald-50 px-2.5 py-1 rounded-lg">Módulo B</span>
+                    </div>
+                </div>
+
+                <!-- Módulo 3 -->
+                <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4 flex flex-col justify-between">
+                    <div>
+                        <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-xl mb-4">
+                            <i class="fa-solid fa-universal-access"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-yaku-900">Diseño Universal Adaptado</h3>
+                        <p class="text-sm text-slate-600 mt-2 leading-relaxed">
+                            Puntos de despacho ergonómicos con altura ajustable, manijas de palanca de bajo esfuerzo, rampas antideslizantes y señalización Braille y alto contraste.
+                        </p>
+                    </div>
+                    <div class="pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-indigo-600">
+                        <span>Ergonomía certificada ISO</span>
+                        <span class="bg-indigo-50 px-2.5 py-1 rounded-lg">Módulo C</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Esquema Interactivo de Flujo de Agua -->
+            <div class="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-sm space-y-6">
+                <h3 class="font-bold text-yaku-900 text-lg">Esquema del Proceso Integral Yakugaini</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 text-center">
+                    <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100 flex flex-col items-center space-y-2">
+                        <div class="w-10 h-10 rounded-full bg-yaku-100 text-yaku-600 flex items-center justify-center font-bold">1</div>
+                        <h4 class="font-bold text-sm text-yaku-900">Captación</h4>
+                        <p class="text-xs text-slate-500">Recolección pluvial o fuentes subterráneas protegidas.</p>
+                    </div>
+                    <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100 flex flex-col items-center space-y-2">
+                        <div class="w-10 h-10 rounded-full bg-yaku-100 text-yaku-600 flex items-center justify-center font-bold">2</div>
+                        <h4 class="font-bold text-sm text-yaku-900">Filtración</h4>
+                        <p class="text-xs text-slate-500">Paso por biofiltros y desinfección UV solar.</p>
+                    </div>
+                    <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100 flex flex-col items-center space-y-2">
+                        <div class="w-10 h-10 rounded-full bg-yaku-100 text-yaku-600 flex items-center justify-center font-bold">3</div>
+                        <h4 class="font-bold text-sm text-yaku-900">Almacenamiento</h4>
+                        <p class="text-xs text-slate-500">Tanques cisternas con sensores IoT de nivel y cloro.</p>
+                    </div>
+                    <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100 flex flex-col items-center space-y-2">
+                        <div class="w-10 h-10 rounded-full bg-yaku-accent text-white flex items-center justify-center font-bold">4</div>
+                        <h4 class="font-bold text-sm text-yaku-900">Despacho Universal</h4>
+                        <p class="text-xs text-slate-500">Estación accesible y segura para la comunidad.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. SECCIÓN SIMULADOR DE IMPACTO SOCIAL Y POBLACIONAL -->
+        <section id="tab-impacto" class="tab-content space-y-6">
+            <div>
+                <h2 class="text-2xl font-bold text-yaku-900">Simulador de Impacto Social y Poblacional</h2>
+                <p class="text-slate-600 text-sm">Ajusta los parámetros para proyectar la reducción de brechas de agua potable en los sectores periurbanos.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Controles del Simulador -->
+                <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-6">
+                    <h3 class="font-bold text-yaku-900 text-base border-b border-slate-100 pb-3">Parámetros de Simulación</h3>
+
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex justify-between text-sm font-medium mb-1">
+                                <label for="rangePoblacion" class="text-slate-700">Población Objetivo (Afectados)</label>
+                                <span id="valPoblacion" class="font-bold text-yaku-600">3.5 Millones</span>
+                            </div>
+                            <input type="range" id="rangePoblacion" min="1.0" max="5.0" step="0.1" value="3.5" oninput="updateSimulacion()" class="w-full accent-yaku-600 cursor-pointer">
+                            <span class="text-[11px] text-slate-400">Escala en millones de habitantes</span>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-sm font-medium mb-1">
+                                <label for="rangeModulos" class="text-slate-700">Estaciones Yakugaini Instaladas</label>
+                                <span id="valModulos" class="font-bold text-yaku-600">150 Estaciones</span>
+                            </div>
+                            <input type="range" id="rangeModulos" min="50" max="500" step="10" value="150" oninput="updateSimulacion()" class="w-full accent-yaku-600 cursor-pointer">
+                            <span class="text-[11px] text-slate-400">Módulos comunitarios activos</span>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-sm font-medium mb-1">
+                                <label for="rangeInversion" class="text-slate-700">Inversión en Infraestructura ($M)</label>
+                                <span id="valInversion" class="font-bold text-yaku-600">$12.5 Millones</span>
+                            </div>
+                            <input type="range" id="rangeInversion" min="2.0" max="30.0" step="0.5" value="12.5" oninput="updateSimulacion()" class="w-full accent-yaku-600 cursor-pointer">
+                            <span class="text-[11px] text-slate-400">Presupuesto asignado USD</span>
+                        </div>
+                    </div>
+
+                    <div class="pt-2">
+                        <button onclick="resetSimulacion()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-2.5 rounded-xl text-sm transition">
+                            Restablecer Valores Base
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Resultados del Impacto Proyectado (2 Columnas) -->
+                <div class="lg:col-span-2 bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm flex flex-col justify-between space-y-6">
+                    <div>
+                        <h3 class="font-bold text-yaku-900 text-base border-b border-slate-100 pb-3 mb-6">Resultados Proyectados del Proyecto</h3>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            <div class="p-5 rounded-2xl bg-yaku-50/50 border border-yaku-100 flex flex-col justify-center">
+                                <span class="text-xs text-slate-500 font-medium">Beneficiarios Directos con Agua Segura</span>
+                                <span id="resBeneficiarios" class="text-3xl font-extrabold text-yaku-900 mt-1">2,450,000</span>
+                                <span class="text-xs text-emerald-600 font-semibold mt-2 flex items-center gap-1">
+                                    <i class="fa-solid fa-arrow-up"></i> 70% de cobertura total alcanzada
+                                </span>
+                            </div>
+
+                            <div class="p-5 rounded-2xl bg-emerald-50/50 border border-emerald-100 flex flex-col justify-center">
+                                <span class="text-xs text-slate-500 font-medium">Reducción de Brecha de Inseguridad Hídrica</span>
+                                <span id="resBrecha" class="text-3xl font-extrabold text-emerald-700 mt-1">-68.5%</span>
+                                <span class="text-xs text-emerald-600 font-semibold mt-2 flex items-center gap-1">
+                                    <i class="fa-solid fa-shield-check"></i> Cumplimiento meta ODS 6
+                                </span>
+                            </div>
+
+                            <div class="p-5 rounded-2xl bg-slate-50 border border-slate-100 flex flex-col justify-center">
+                                <span class="text-xs text-slate-500 font-medium">Horas de Acarreo Ahorradas / Familia / Mes</span>
+                                <span id="resHoras" class="text-3xl font-extrabold text-slate-800 mt-1">32 Horas</span>
+                                <span class="text-xs text-yaku-600 font-semibold mt-2">Impacto directo en calidad de vida</span>
+                            </div>
+
+                            <div class="p-5 rounded-2xl bg-slate-50 border border-slate-100 flex flex-col justify-center">
+                                <span class="text-xs text-slate-500 font-medium">Reducción en Enfermedades Gastrointestinales</span>
+                                <span id="resEnfermedades" class="text-3xl font-extrabold text-slate-800 mt-1">-54.2%</span>
+                                <span class="text-xs text-emerald-600 font-semibold mt-2">Ahorro en gasto en salud pública</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-4 rounded-xl bg-yaku-900 text-white flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-lg bg-yaku-700 flex items-center justify-center text-yaku-accent">
+                                <i class="fa-solid fa-lightbulb text-lg"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-sm">Conclusión del Simulador</h4>
+                                <p class="text-xs text-slate-300">Con la infraestructura propuesta se logra mitigar la crisis hídrica periurbana de forma sostenible.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. SECCIÓN CENTRO DE REPORTES Y SOLICITUDES COMUNITARIAS -->
+        <section id="tab-reportes" class="tab-content space-y-6">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                    <h2 class="text-2xl font-bold text-yaku-900">Centro de Reportes y Solicitudes Comunitarias</h2>
+                    <p class="text-slate-600 text-sm">Canal directo para que los sectores periurbanos reporten cortes, baja presión o soliciten soporte técnico.</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Formulario de Nuevo Reporte -->
+                <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
+                    <h3 class="font-bold text-yaku-900 text-base border-b border-slate-100 pb-3">Enviar Nuevo Reporte</h3>
+                    
+                    <form onsubmit="submitReporte(event)" class="space-y-4">
+                        <div>
+                            <label for="repSector" class="block text-xs font-semibold text-slate-700 mb-1">Sector Periurbano</label>
+                            <select id="repSector" class="w-full rounded-xl border border-slate-200 p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-yaku-500 bg-slate-50">
+                                <option>Sector Norte - Laderas de Alta Vista</option>
+                                <option>Sector Este - Colinas del Sol</option>
+                                <option>Sector Sur - Villa Esperanza</option>
+                                <option>Sector Oeste - Nueva Esperanza Alta</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="repTipo" class="block text-xs font-semibold text-slate-700 mb-1">Tipo de Incidencia</label>
+                            <select id="repTipo" class="w-full rounded-xl border border-slate-200 p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-yaku-500 bg-slate-50">
+                                <option>Corte de suministro</option>
+                                <option>Baja presión de agua</option>
+                                <option>Mantenimiento de estación universal</option>
+                                <option>Alerta de turbidez / calidad</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="repNombre" class="block text-xs font-semibold text-slate-700 mb-1">Nombre del Líder / Vecino</label>
+                            <input type="text" id="repNombre" required placeholder="Ej. María Quispe" class="w-full rounded-xl border border-slate-200 p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-yaku-500 bg-slate-50">
+                        </div>
+
+                        <div>
+                            <label for="repDesc" class="block text-xs font-semibold text-slate-700 mb-1">Descripción de la Solicitud</label>
+                            <textarea id="repDesc" rows="3" required placeholder="Describa el problema o requerimiento..." class="w-full rounded-xl border border-slate-200 p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-yaku-500 bg-slate-50"></textarea>
+                        </div>
+
+                        <button type="submit" class="w-full bg-yaku-600 hover:bg-yaku-700 text-white font-semibold py-3 rounded-xl text-sm transition shadow-md flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-paper-plane"></i> Enviar Reporte Comunitario
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Historial de Reportes de la Comunidad (2 Columnas) -->
+                <div class="lg:col-span-2 bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
+                    <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                        <h3 class="font-bold text-yaku-900 text-base">Reportes y Estado de Solicitudes</h3>
+                        <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-700" id="totalReportesCount">3 Registros Activos</span>
+                    </div>
+
+                    <div id="listaReportes" class="space-y-3 pt-2">
+                        <!-- Reporte 1 -->
+                        <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                            <div class="space-y-1">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs font-bold text-yaku-900">Sector Norte - Laderas de Alta Vista</span>
+                                    <span class="text-[10px] bg-amber-100 text-amber-800 px-2 py-0.5 rounded font-semibold">En Proceso</span>
+                                </div>
+                                <p class="text-xs text-slate-600">Baja presión en la estación central comunitaria N° 3.</p>
+                                <span class="text-[10px] text-slate-400">Reportado por: Carlos Mendoza • Hace 2 horas</span>
+                            </div>
+                            <button onclick="resolverReporte(this)" class="bg-white hover:bg-slate-100 border border-slate-200 text-xs font-semibold text-slate-700 px-3 py-1.5 rounded-lg transition">
+                                Marcar Atendido
+                            </button>
+                        </div>
+
+                        <!-- Reporte 2 -->
+                        <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                            <div class="space-y-1">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs font-bold text-yaku-900">Sector Este - Colinas del Sol</span>
+                                    <span class="text-[10px] bg-rose-100 text-rose-800 px-2 py-0.5 rounded font-semibold">Urgente</span>
+                                </div>
+                                <p class="text-xs text-slate-600">Revisión de rampa de acceso universal en tanque de distribución.</p>
+                                <span class="text-[10px] text-slate-400">Reportado por: Juana Huamán • Hace 5 horas</span>
+                            </div>
+                            <button onclick="resolverReporte(this)" class="bg-white hover:bg-slate-100 border border-slate-200 text-xs font-semibold text-slate-700 px-3 py-1.5 rounded-lg transition">
+                                Marcar Atendido
+                            </button>
+                        </div>
+
+                        <!-- Reporte 3 -->
+                        <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                            <div class="space-y-1">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs font-bold text-yaku-900">Sector Sur - Villa Esperanza</span>
+                                    <span class="text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-semibold">Atendido</span>
+                                </div>
+                                <p class="text-xs text-slate-600">Mantenimiento preventivo de biofiltros completado con éxito.</p>
+                                <span class="text-[10px] text-slate-400">Reportado por: Comité Barrial • Ayer</span>
+                            </div>
+                            <button onclick="resolverReporte(this)" class="bg-white hover:bg-slate-100 border border-slate-200 text-xs font-semibold text-slate-700 px-3 py-1.5 rounded-lg transition">
+                                Marcar Atendido
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- PIE DE PÁGINA -->
+    <footer class="bg-white border-t border-slate-200 py-6 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center text-xs text-slate-500 space-y-2 sm:space-y-0">
+            <p>© 2026 <strong>Yakugaini</strong>. Solución Integral de Ingeniería Ambiental y Diseño Universal.</p>
+            <div class="flex space-x-4">
+                <span class="flex items-center gap-1 text-yaku-600 font-medium"><i class="fa-solid fa-shield-halved"></i> Accesibilidad Universal Garantizada</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- MODAL DE MENSAJE PERSONALIZADO (Evitando alert nativo) -->
+    <div id="customModal" class="hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 animate-fadeIn">
+            <div class="w-12 h-12 rounded-full bg-yaku-50 text-yaku-600 flex items-center justify-center text-xl mx-auto">
+                <i class="fa-solid fa-circle-info" id="modalIcon"></i>
+            </div>
+            <div class="text-center space-y-1">
+                <h3 id="modalTitle" class="font-bold text-lg text-yaku-900">Aviso Yakugaini</h3>
+                <p id="modalMessage" class="text-sm text-slate-600">Mensaje de prueba</p>
+            </div>
+            <button onclick="closeModal()" class="w-full bg-yaku-600 hover:bg-yaku-700 text-white font-semibold py-2.5 rounded-xl text-sm transition shadow">
+                Entendido
+            </button>
+        </div>
+    </div>
+
+    <!-- SCRIPTS DE INTERACCIÓN Y DINÁMICA -->
+    <script>
+        // Control de Pestañas (Tabs)
+        function switchTab(tabId) {
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(t => t.classList.remove('active'));
+
+            const buttons = document.querySelectorAll('.nav-btn');
+            buttons.forEach(b => {
+                b.classList.remove('text-yaku-600', 'bg-yaku-50');
+                b.classList.add('text-slate-600', 'hover:text-yaku-600', 'hover:bg-slate-50');
+            });
+
+            document.getElementById('tab-' + tabId).classList.add('active');
+            const activeBtn = document.getElementById('nav-' + tabId);
+            if(activeBtn) {
+                activeBtn.classList.remove('text-slate-600', 'hover:text-yaku-600', 'hover:bg-slate-50');
+                activeBtn.classList.add('text-yaku-600', 'bg-yaku-50');
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Menú Móvil Toggle
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        // Accesibilidad: Alto Contraste
+        let isHighContrast = false;
+        function toggleHighContrast() {
+            isHighContrast = !isHighContrast;
+            if(isHighContrast) {
+                document.body.classList.add('high-contrast');
+                document.getElementById('btnContrast').classList.add('bg-white', 'text-black');
+            } else {
+                document.body.classList.remove('high-contrast');
+                document.getElementById('btnContrast').classList.remove('bg-white', 'text-black');
+            }
+        }
+
+        // Accesibilidad: Ajuste de Tamaño de Fuente
+        let currentScale = 100;
+        function adjustFontSize(delta) {
+            currentScale += delta * 10;
+            if(currentScale < 90) currentScale = 90;
+            if(currentScale > 140) currentScale = 140;
+            document.body.style.fontSize = currentScale + '%';
+        }
+
+        // Selección de Sector en Mapa Simulado
+        function selectSector(nombreSector) {
+            document.getElementById('detName').innerText = nombreSector;
+            if(nombreSector.includes('Colinas')) {
+                document.getElementById('detCalidad').innerText = '1.2 NTU (Regular)';
+                document.getElementById('detCalidad').className = 'text-lg font-bold text-amber-600';
+                document.getElementById('detPresion').innerText = '1.1 Bar';
+                document.getElementById('detPoblacion').innerText = '38,000 habitantes';
+                document.getElementById('detEstado').innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Requiere Mantenimiento';
+                document.getElementById('detEstado').className = 'text-sm font-semibold text-amber-600 flex items-center gap-1.5 mt-0.5';
+            } else if(nombreSector.includes('Nueva Esperanza')) {
+                document.getElementById('detCalidad').innerText = '2.1 NTU (Crítico)';
+                document.getElementById('detCalidad').className = 'text-lg font-bold text-rose-600';
+                document.getElementById('detPresion').innerText = '0.8 Bar';
+                document.getElementById('detPoblacion').innerText = '52,000 habitantes';
+                document.getElementById('detEstado').innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Alerta de Baja Presión';
+                document.getElementById('detEstado').className = 'text-sm font-semibold text-rose-600 flex items-center gap-1.5 mt-0.5';
+            } else {
+                document.getElementById('detCalidad').innerText = '0.4 NTU (Excelente)';
+                document.getElementById('detCalidad').className = 'text-lg font-bold text-emerald-600';
+                document.getElementById('detPresion').innerText = '2.4 Bar';
+                document.getElementById('detPoblacion').innerText = '45,000 habitantes';
+                document.getElementById('detEstado').innerHTML = '<i class="fa-solid fa-circle-check"></i> Accesible & Operativa';
+                document.getElementById('detEstado').className = 'text-sm font-semibold text-emerald-700 flex items-center gap-1.5 mt-0.5';
+            }
+            showModal("Información del Sector", "Se han cargado los parámetros en tiempo real para " + nombreSector);
+        }
+
+        function alertSectorAction() {
+            const sector = document.getElementById('detName').innerText;
+            showModal("Asistencia Técnica", "Se ha enviado una alerta prioritaria al equipo de ingeniería para el " + sector + ".");
+        }
+
+        // Actualizar datos de monitoreo
+        function refreshData() {
+            showModal("Monitoreo Actualizado", "Los sensores IoT han sincronizado correctamente los parámetros de caudal y calidad en los 12 sectores.");
+        }
+
+        // Simulador de Impacto
+        function updateSimulacion() {
+            const pop = parseFloat(document.getElementById('rangePoblacion').value);
+            const mods = parseInt(document.getElementById('rangeModulos').value);
+            const inv = parseFloat(document.getElementById('rangeInversion').value);
+
+            document.getElementById('valPoblacion').innerText = pop.toFixed(1) + ' Millones';
+            document.getElementById('valModulos').innerText = mods + ' Estaciones';
+            document.getElementById('valInversion').innerText = '$' + inv.toFixed(1) + ' Millones';
+
+            // Cálculos dinámicos simulados
+            const beneficiarios = (pop * 0.75 * (mods / 200)).toFixed(1);
+            const reduccionBrecha = Math.min(95, (inv * 4.5 + mods * 0.1)).toFixed(1);
+            const horasAhorro = Math.round(20 + mods * 0.08);
+
+            document.getElementById('resBeneficiarios').innerText = (beneficiarios * 1000000).toLocaleString('es-ES');
+            document.getElementById('resBrecha').innerText = '-' + reduccionBrecha + '%';
+            document.getElementById('resHoras').innerText = horasAhorro + ' Horas';
+            document.getElementById('resEnfermedades').innerText = '-' + (reduccionBrecha * 0.75).toFixed(1) + '%';
+        }
+
+        function resetSimulacion() {
+            document.getElementById('rangePoblacion').value = 3.5;
+            document.getElementById('rangeModulos').value = 150;
+            document.getElementById('rangeInversion').value = 12.5;
+            updateSimulacion();
+        }
+
+        // Envío de Reporte Comunitario
+        function submitReporte(event) {
+            event.preventDefault();
+            const sector = document.getElementById('repSector').value;
+            const tipo = document.getElementById('repTipo').value;
+            const nombre = document.getElementById('repNombre').value;
+            const desc = document.getElementById('repDesc').value;
+
+            const lista = document.getElementById('listaReportes');
+            const nuevoItem = document.createElement('div');
+            nuevoItem.className = 'p-4 rounded-xl border border-slate-200 bg-slate-50/50 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 animate-fadeIn';
+            nuevoItem.innerHTML = `
+                <div class="space-y-1">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-bold text-yaku-900">${sector}</span>
+                        <span class="text-[10px] bg-amber-100 text-amber-800 px-2 py-0.5 rounded font-semibold">${tipo}</span>
+                    </div>
+                    <p class="text-xs text-slate-600">${desc}</p>
+                    <span class="text-[10px] text-slate-400">Reportado por: ${nombre} • Justo ahora</span>
+                </div>
+                <button onclick="resolverReporte(this)" class="bg-white hover:bg-slate-100 border border-slate-200 text-xs font-semibold text-slate-700 px-3 py-1.5 rounded-lg transition">
+                    Marcar Atendido
+                </button>
+            `;
+            lista.prepend(nuevoItem);
+            document.getElementById('repDesc').value = '';
+            document.getElementById('repNombre').value = '';
+            showModal("Reporte Exitoso", "Su solicitud ha sido registrada en el sistema comunitario de Yakugaini.");
+        }
+
+        function resolverReporte(btn) {
+            const card = btn.closest('div').parentElement;
+            const badge = card.querySelector('span.rounded');
+            badge.className = 'text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-semibold';
+            badge.innerText = 'Atendido';
+            btn.remove();
+            showModal("Actualización", "El estado del reporte ha sido cambiado a Atendido.");
+        }
+
+        // Sistema de Modal Personalizado (evitando alert)
+        function showModal(title, message) {
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalMessage').innerText = message;
+            document.getElementById('customModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('customModal').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
+```
